@@ -1,6 +1,7 @@
 plugins {
     id 'application'
     id 'java'
+    id 'java-library'
     id 'org.graalvm.buildtools.native' version '0.9.7.1'
 }
 
@@ -36,6 +37,14 @@ graalvmNative {
                 //vendor = JvmVendorSpec.matching("")
             }
         }
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'main.Main'
+        )
     }
 }
 
