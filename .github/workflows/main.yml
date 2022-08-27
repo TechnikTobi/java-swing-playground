@@ -16,17 +16,26 @@ jobs:
 
   build_and_publish:
 
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
 
       - uses: actions/checkout@v3
+      
+      - name: Print PWD
+        run: pwd
 
       - name: Get into project
         run: cd ${{github.workspace}}/SwingTestTwo
+      
+      - name: Print PWD
+        run: pwd
         
       - name: List project directory
         run: ls -R
+        
+      - name: List long
+        run: ls -l
         
       - name: Native compile
         run: ./gradlew nativeCompile
