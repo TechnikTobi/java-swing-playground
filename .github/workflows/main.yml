@@ -21,24 +21,41 @@ jobs:
     steps:
 
       - uses: actions/checkout@v3
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          version: 'latest'
+          java-version: '17'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Print PWD
         run: pwd
+      
+      - name: Get info about build enviornment
+        run: |
+          echo "GRAALVM_HOME: $GRAALVM_HOME"
+          echo "JAVA_HOME: $JAVA_HOME"
+          java --version
+          gu --version
+          native-image --version
         
-      - name: Native compile
+      - name: Gradle & native build
         run: |
           cd SwingTestTwo/
-          ./gradlew nativeCompile
-        
-      - name: Create artifact
-        run: |
-          cd SwingTestTwo/
-          mkdir macos-latest-release
-          cp build/native/nativeCompile/SwingTestTwo macos-latest-release/
+          rm -rf build
+          ./gradlew build
+          native-image -jar $(find build -name *.jar) HELLO
+#          native-image build/classes/java/main/main/Main
+#          native-image $(find build -name *.class)
           
-      - name: ZIP artifact
+      - name: List all
+        run: ls -R
+        
+      - name: Create & ZIP artifact
         run: |
           cd SwingTestTwo/
+          mkdir macos-latest-release    
+          cp $(find build -name HELLO) macos-latest-release/
           zip -r macos-latest.zip macos-latest-release/
           mv macos-latest.zip ..
           
