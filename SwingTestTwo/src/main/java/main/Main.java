@@ -1,6 +1,6 @@
 package main;
 
-import com.formdev.flatlaf.FlatDarkLaf;
+//import com.formdev.flatlaf.FlatDarkLaf;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +13,7 @@ public class Main {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("apple.awt.application.appearance", "system");
         System.setProperty( "apple.awt.application.name", "SwingTestTwo" );
-        FlatDarkLaf.setup();
+        //FlatDarkLaf.setup();
 
         JFrame f=new JFrame("Button Example");
         final JTextField tf=new JTextField();
