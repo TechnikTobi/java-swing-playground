@@ -55,7 +55,7 @@ jobs:
         run: |
           cd SwingTestTwo/
           mkdir macos-latest-release    
-          cp $(find build -name HELLO) macos-latest-release/
+          cp HELLO macos-latest-release/
           zip -r macos-latest.zip macos-latest-release/
           mv macos-latest.zip ..
           
