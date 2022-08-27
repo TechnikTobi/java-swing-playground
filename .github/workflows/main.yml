@@ -44,7 +44,8 @@ jobs:
           cd SwingTestTwo/
           rm -rf build
           ./gradlew build
-          native-image build/classes/java/main/main/Main
+          native-image -jar $(find build -name *.jar) HELLO
+#          native-image build/classes/java/main/main/Main
 #          native-image $(find build -name *.class)
           
       - name: List all
@@ -53,8 +54,8 @@ jobs:
       - name: Create & ZIP artifact
         run: |
           cd SwingTestTwo/
-          mkdir macos-latest-release
-          cp main macos-latest-release/
+          mkdir macos-latest-release    
+          cp $(find build -name HELLO) macos-latest-release/
           zip -r macos-latest.zip macos-latest-release/
           mv macos-latest.zip ..
           
