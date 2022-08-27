@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Get into project
-        run: cd ${{github.workspace}}
+        run: cd ${{github.workspace}}/SwingTestTwo
         
       - name: List project directory
         run: ls -R
