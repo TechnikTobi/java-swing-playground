@@ -27,6 +27,25 @@ jobs:
         
       - name: List project directory
         run: ls -R
+        
+      - name: Native compile
+        run: ./gradlew nativeCompile
+        
+      - name: Create artifact
+        run: |
+          mkdir macos-latest-release
+          cp build/native/nativeCompile/SwingTestTwo macos-latest-release/
+          
+      - name: ZIP artifact
+        run: |
+          zip -r macos-latest.zip macos-latest-release/
+          
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          retention-days: 1
+          name: macos-latest
+          path: macos-latest.zip
 
 #      - name: Run a multi-line script
 #        run: |
