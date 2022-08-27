@@ -24,30 +24,23 @@ jobs:
       
       - name: Print PWD
         run: pwd
-
-      - name: Get into project
-        run: cd ${{github.workspace}}/SwingTestTwo
-      
-      - name: Print PWD
-        run: pwd
-        
-      - name: List project directory
-        run: ls -R
-        
-      - name: List long
-        run: ls -l
         
       - name: Native compile
-        run: ./gradlew nativeCompile
+        run: |
+          cd SwingTestTwo/
+          ./gradlew nativeCompile
         
       - name: Create artifact
         run: |
+          cd SwingTestTwo/
           mkdir macos-latest-release
           cp build/native/nativeCompile/SwingTestTwo macos-latest-release/
           
       - name: ZIP artifact
         run: |
+          cd SwingTestTwo/
           zip -r macos-latest.zip macos-latest-release/
+          mv macos-latest.zip ..
           
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
