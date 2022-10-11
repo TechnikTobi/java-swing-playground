@@ -58,14 +58,8 @@ jobs:
           cd SwingTestTwo/
           ./gradlew build
           ls -R
-          echo $(find build/libs/ -name *.jar)
-          echo $(find build/libs -name *.jar)
-          echo $(find ./build/libs/ -name *.jar)
-          echo $(find ./build/libs -name *.jar)
-          echo $(find ./build -name *.jar)
-          echo $(find build -name *.jar)
-          echo $(find . -name *.jar)
-          echo $(dir *.jar)
+          dir  /s /b *.jar
+          echo $(dir  /s /b *.jar)
           native-image -jar build/libs/SwingTestTwo-1.0-SNAPSHOT.jar HELLO
         if: matrix.os == 'windows-latest'
         #          echo $(where /r build *.jar)
