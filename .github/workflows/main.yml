@@ -3,8 +3,8 @@
 name: CI
 
 on:
-#  push:
-#    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
 #  pull_request:
 #    branches: [ "main" ]
   workflow_dispatch:
@@ -41,6 +41,7 @@ jobs:
           java --version
           gu --version
           native-image --version
+        if: matrix.os != 'windows-latest'
         
       # Build the application
       - name: Gradle & native build
