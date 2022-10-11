@@ -2,13 +2,11 @@
 
 name: CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+#  push:
+#    branches: [ "main" ]
+#  pull_request:
+#    branches: [ "main" ]
   workflow_dispatch:
 
 
@@ -16,11 +14,17 @@ jobs:
 
   build_and_publish:
 
-    runs-on: macos-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
 
+      # Get the source code
       - uses: actions/checkout@v3
+      
+      # Setup the java enviornment 
       - uses: graalvm/setup-graalvm@v1
         with:
           version: 'latest'
@@ -28,9 +32,7 @@ jobs:
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Print PWD
-        run: pwd
-      
+      # Get information about enviornment
       - name: Get info about build enviornment
         run: |
           echo "GRAALVM_HOME: $GRAALVM_HOME"
@@ -39,6 +41,7 @@ jobs:
           gu --version
           native-image --version
         
+      # Build the application
       - name: Gradle & native build
         run: |
           cd SwingTestTwo/
@@ -50,23 +53,36 @@ jobs:
           
       - name: List all
         run: ls -R
-        
-      - name: Create & ZIP artifact
+
+        # Create Artifact
+      - name: Create Artifact (non-windows)
         run: |
-          cd SwingTestTwo/
-          mkdir macos-latest-release    
-          cp HELLO macos-latest-release/
-          zip -r macos-latest.zip macos-latest-release/
-          mv macos-latest.zip ..
+          cd SwingTestTwo
+          mkdir ${{ matrix.os }}-release
+          cp HELLO* ${{ matrix.os }}-release/
+      
+      
+        # ZIP Artifact
+      - name: ZIP Artifact (non-windows)
+        run: |
+          cd SwingTestTwo
+          zip -r ${{ matrix.os }}.zip ${{ matrix.os }}-release/
+          mv ${{ matrix.os }}.zip ..
+        if: matrix.os != 'windows-latest'
           
+      - name: ZIP Artifact (windows)
+        shell: msys2 {0}
+        run: |
+          cd SwingTestTwo
+          7z a "${{ matrix.os }}.zip" "${{ matrix.os }}-release/"
+          mv ${{ matrix.os }}.zip ..
+        if: matrix.os == 'windows-latest'
+      
+      
+        # Publish Artifact
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
         with:
           retention-days: 1
-          name: macos-latest
-          path: macos-latest.zip
-
-#      - name: Run a multi-line script
-#        run: |
-#          echo Add other actions to build,
-#          echo test, and deploy your project.
+          name: ${{ matrix.os }}
+          path: ${{ matrix.os }}.zip
