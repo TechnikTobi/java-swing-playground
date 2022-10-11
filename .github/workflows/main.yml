@@ -43,17 +43,30 @@ jobs:
           native-image --version
         if: matrix.os != 'windows-latest'
         
-      # Build the application
-      - name: Gradle & native build
+        
+        # Build the application (Windows)
+      - name: Gradle & native build (Windows)
+        run: |
+          cd SwingTestTwo/
+          ./gradlew build
+          native-image -jar $(find build -name *.jar) HELLO
+#          native-image build/classes/java/main/main/Main
+#          native-image $(find build -name *.class)
+        if: matrix.os != "windows-latest"
+        
+      # Build the application (Windows)
+      - name: Gradle & native build (Windows)
         run: |
           cd SwingTestTwo/
           ./gradlew build
           ls -R
           echo $(find build -name *.jar)
           echo $(find . -name *.jar)
-          native-image -jar $(find . -name *.jar) HELLO
+          native-image -jar build/libs/SwingTestTwo-1.0-SNAPSHOT.jar HELLO
+#          native-image -jar $(find . -name *.jar) HELLO
 #          native-image build/classes/java/main/main/Main
 #          native-image $(find build -name *.class)
+        if: matrix.os == "windows-latest"
           
       - name: List all
         run: ls -R
