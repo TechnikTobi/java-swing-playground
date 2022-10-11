@@ -60,6 +60,7 @@ jobs:
           ls -R
           echo $(find build -name *.jar)
           echo $(find . -name *.jar)
+          echo $(where /r build *.jar)
           native-image -jar build/libs/SwingTestTwo-1.0-SNAPSHOT.jar HELLO
         if: matrix.os == 'windows-latest'
           
@@ -83,7 +84,6 @@ jobs:
         if: matrix.os != 'windows-latest'
           
       - name: ZIP Artifact (windows)
-        shell: msys2 {0}
         run: |
           cd SwingTestTwo
           7z a "${{ matrix.os }}.zip" "${{ matrix.os }}-release/"
