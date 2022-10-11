@@ -58,6 +58,11 @@ jobs:
           cd SwingTestTwo/
           ./gradlew build
           ls -R
+          echo $(find build/libs/ -name *.jar)
+          echo $(find build/libs -name *.jar)
+          echo $(find ./build/libs/ -name *.jar)
+          echo $(find ./build/libs -name *.jar)
+          echo $(find ./build -name *.jar)
           echo $(find build -name *.jar)
           echo $(find . -name *.jar)
           echo $(dir *.jar)
