@@ -50,9 +50,7 @@ jobs:
           cd SwingTestTwo/
           ./gradlew build
           native-image -jar $(find build -name *.jar) HELLO
-#          native-image build/classes/java/main/main/Main
-#          native-image $(find build -name *.class)
-        if: matrix.os != "windows-latest"
+        if: matrix.os != 'windows-latest'
         
       # Build the application (Windows)
       - name: Gradle & native build (Windows)
@@ -63,10 +61,7 @@ jobs:
           echo $(find build -name *.jar)
           echo $(find . -name *.jar)
           native-image -jar build/libs/SwingTestTwo-1.0-SNAPSHOT.jar HELLO
-#          native-image -jar $(find . -name *.jar) HELLO
-#          native-image build/classes/java/main/main/Main
-#          native-image $(find build -name *.class)
-        if: matrix.os == "windows-latest"
+        if: matrix.os == 'windows-latest'
           
       - name: List all
         run: ls -R
