@@ -49,7 +49,9 @@ jobs:
           cd SwingTestTwo/
           ./gradlew build
           ls -R
-          native-image -jar $(find build -name *.jar) HELLO
+          echo $(find build -name *.jar)
+          echo $(find . -name *.jar)
+          native-image -jar $(find . -name *.jar) HELLO
 #          native-image build/classes/java/main/main/Main
 #          native-image $(find build -name *.class)
           
