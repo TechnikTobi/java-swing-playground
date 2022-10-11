@@ -60,9 +60,10 @@ jobs:
           ls -R
           echo $(find build -name *.jar)
           echo $(find . -name *.jar)
-          echo $(where /r build *.jar)
+          echo $(dir *.jar)
           native-image -jar build/libs/SwingTestTwo-1.0-SNAPSHOT.jar HELLO
         if: matrix.os == 'windows-latest'
+        #          echo $(where /r build *.jar)
           
       - name: List all
         run: ls -R
