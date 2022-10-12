@@ -57,7 +57,7 @@ jobs:
         run: |
           cd SwingTestTwo/
           ./gradlew build
-          echo $(find build/ -name "*.jar")
+          native-image -jar $(dir /s /b *.jar) HELLO 
 #          native-image -jar build/libs/SwingTestTwo-1.0-SNAPSHOT.jar HELLO
 #          ls -R
 #          echo $(find /c/ -name "*.jar")
