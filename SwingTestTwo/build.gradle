@@ -48,6 +48,16 @@ jar {
     }
 }
 
+task customFatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'main.Main'
+    }
+    baseName = 'all-in-one-jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
 application {
     // Define the main class for the application.
     mainClass = 'main.Main'
