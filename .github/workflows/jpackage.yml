@@ -14,11 +14,11 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest] #, windows-latest] # ubuntu-latest
+        os: [macos-latest, windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     
     env:
-      NativeImageOutput: HELLO
+      NativeImageOutput: JavaSwingPlaygroundTest
 
     steps:
 
@@ -30,7 +30,14 @@ jobs:
         run: |
           cd SwingTestTwo/
           ./gradlew build
-          jpackage --input . --type dmg --dest . --main-jar $(find build -name *.jar) --main-class main.Main --name ${{ env.NativeImageOutput }}
+          jpackage \
+            --app-version 1.0.0
+            --input . \
+            --dest . \
+            --main-jar $(find build -name *.jar) \
+            --main-class main.Main \
+            --name ${{ env.NativeImageOutput }}
+            --copyright "Tobias Prisching"
         if: matrix.os == 'macos-latest'
         
         # Build the application (windows)
@@ -39,15 +46,29 @@ jobs:
         run: |
           cd SwingTestTwo/
           ./gradlew build
-          native-image -jar $(dir /s /b "*.jar") ${{ env.NativeImageOutput }}
+          jpackage \
+            --app-version 1.0.0
+            --input . \
+            --dest . \
+            --main-jar $(dir /s /b "*.jar") \
+            --main-class main.Main \
+            --name ${{ env.NativeImageOutput }}
+            --copyright "Tobias Prisching"
         if: matrix.os == 'windows-latest'
         
-        # Build the application (non-windows)
-      - name: Gradle & native build (non-windows)
+        # Build the application (linux)
+      - name: Gradle & native build (linux)
         run: |
           cd SwingTestTwo/
-          ./gradlew customFatJar
-          native-image --no-fallback --no-server --verbose -Djava.awt.headless=false -jar $(find build -name *.jar) ${{ env.NativeImageOutput }}
+          ./gradlew build
+          jpackage \
+            --app-version 1.0.0
+            --input . \
+            --dest . \
+            --main-jar $(find build -name *.jar) \
+            --main-class main.Main \
+            --name ${{ env.NativeImageOutput }}
+            --copyright "Tobias Prisching"
         if: matrix.os == 'ubuntu-latest'
           
           
