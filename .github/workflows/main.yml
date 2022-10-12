@@ -50,7 +50,7 @@ jobs:
         run: |
           cd SwingTestTwo/
           ./gradlew customFatJar
-          native-image -jar $(find build -name *.jar) HELLO --verbose
+          native-image --no-fallback --no-server --verbose -Djava.awt.headless=false -jar $(find build -name *.jar) HELLO
         if: matrix.os != 'windows-latest'
 #          ./gradlew build
         
