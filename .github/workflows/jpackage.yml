@@ -33,7 +33,7 @@ jobs:
           jpackage \
             --app-version 1.0.0 \
             --input . \
-            --dest . \
+            --dest ${{ matrix.os }}-release/ \
             --main-jar $(find build -name *.jar) \
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
@@ -49,7 +49,7 @@ jobs:
           jpackage \
             --app-version 1.0.0 \
             --input . \
-            --dest . \
+            --dest ${{ matrix.os }}-release/ \
             --main-jar $(dir /s /b "*.jar") \
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
@@ -64,22 +64,13 @@ jobs:
           jpackage \
             --app-version 1.0.0 \
             --input . \
-            --dest . \
+            --dest ${{ matrix.os }}-release/ \
             --main-jar $(find build -name *.jar) \
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
             --copyright "Tobias Prisching"
         if: matrix.os == 'ubuntu-latest'
           
-          
-          
-        # Create Artifact
-      - name: Create Artifact (non-windows)
-        run: |
-          cd SwingTestTwo
-          mkdir ${{ matrix.os }}-release
-          cp ${{ env.NativeImageOutput }}* ${{ matrix.os }}-release/
-      
       
       
         # ZIP Artifact
