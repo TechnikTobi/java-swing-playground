@@ -33,7 +33,7 @@ jobs:
           jpackage \
             --app-version 1.0.0 \
             --input . \
-            --dest ${{ matrix.os }}-release/ \
+            --dest ${{ matrix.os }}-release \
             --main-jar $(find build -name *.jar) \
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
@@ -49,7 +49,7 @@ jobs:
           jpackage \
             --app-version 1.0.0 \
             --input . \
-            --dest ${{ matrix.os }}-release/ \
+            --dest ${{ matrix.os }}-release \
             --main-jar $(dir /s /b "*.jar") \
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
@@ -64,7 +64,7 @@ jobs:
           jpackage \
             --app-version 1.0.0 \
             --input . \
-            --dest ${{ matrix.os }}-release/ \
+            --dest ${{ matrix.os }}-release \
             --main-jar $(find build -name *.jar) \
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
