@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [windows-latest]
         #os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
 
@@ -57,11 +57,31 @@ jobs:
         run: |
           cd SwingTestTwo/
           ./gradlew build
-          ls -R
-          echo $(find /c/ -name "*.jar")
-          native-image -jar build/libs/SwingTestTwo-1.0-SNAPSHOT.jar HELLO
+#          native-image -jar build/libs/SwingTestTwo-1.0-SNAPSHOT.jar HELLO
+#          ls -R
+#          echo $(find /c/ -name "*.jar")
         if: matrix.os == 'windows-latest'
-        #          echo $(where /r build *.jar)
+        
+      - name: Fetch action
+        id: findfile
+        uses: Rishabh510/Path-lister-action@master
+        with:
+          path: "build/"
+          type: ".jar"
+        if: matrix.os == 'windows-latest'
+        
+      - name: Output results
+        run: |
+          echo "Found ${{ steps.findfile.outputs.path_count }} file(s) with this extension:"
+          for i in ${{ steps.findfile.outputs.paths }}; do
+          echo $i
+          done
+          echo ${{ steps.findfile.outputs.paths }}[0]
+        if: matrix.os == 'windows-latest'
+          
+          
+          
+          
           
       - name: List all
         run: ls -R
