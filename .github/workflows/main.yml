@@ -44,15 +44,21 @@ jobs:
         if: matrix.os != 'windows-latest'
         
         
+        # Install required library for Linux
+      - name: Install libXi on Linux
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libxi-dev
+        if: matrix.os == 'ubuntu-latest'
         
         # Build the application (non-windows)
       - name: Gradle & native build (non-windows)
         run: |
           cd SwingTestTwo/
-          ./gradlew customFatJar
+          ./gradlew build
           native-image --no-fallback --no-server --verbose -Djava.awt.headless=false -jar $(find build -name *.jar) HELLO
         if: matrix.os != 'windows-latest'
-#          ./gradlew build
+#          ./gradlew customFatJar
         
       # Build the application (windows)
       - name: Gradle & native build (windows)
