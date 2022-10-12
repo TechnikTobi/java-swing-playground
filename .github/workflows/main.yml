@@ -49,9 +49,10 @@ jobs:
       - name: Gradle & native build (non-windows)
         run: |
           cd SwingTestTwo/
-          ./gradlew build
+          ./gradlew customFatJar
           native-image -jar $(find build -name *.jar) HELLO --verbose
         if: matrix.os != 'windows-latest'
+#          ./gradlew build
         
       # Build the application (windows)
       - name: Gradle & native build (windows)
