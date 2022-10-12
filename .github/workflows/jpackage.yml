@@ -31,12 +31,12 @@ jobs:
           cd SwingTestTwo/
           ./gradlew build
           jpackage \
-            --app-version 1.0.0
+            --app-version 1.0.0 \
             --input . \
             --dest . \
             --main-jar $(find build -name *.jar) \
             --main-class main.Main \
-            --name ${{ env.NativeImageOutput }}
+            --name ${{ env.NativeImageOutput }} \
             --copyright "Tobias Prisching"
         if: matrix.os == 'macos-latest'
         
@@ -47,12 +47,12 @@ jobs:
           cd SwingTestTwo/
           ./gradlew build
           jpackage \
-            --app-version 1.0.0
+            --app-version 1.0.0 \
             --input . \
             --dest . \
             --main-jar $(dir /s /b "*.jar") \
             --main-class main.Main \
-            --name ${{ env.NativeImageOutput }}
+            --name ${{ env.NativeImageOutput }} \
             --copyright "Tobias Prisching"
         if: matrix.os == 'windows-latest'
         
@@ -62,12 +62,12 @@ jobs:
           cd SwingTestTwo/
           ./gradlew build
           jpackage \
-            --app-version 1.0.0
+            --app-version 1.0.0 \
             --input . \
             --dest . \
             --main-jar $(find build -name *.jar) \
             --main-class main.Main \
-            --name ${{ env.NativeImageOutput }}
+            --name ${{ env.NativeImageOutput }} \
             --copyright "Tobias Prisching"
         if: matrix.os == 'ubuntu-latest'
           
