@@ -54,6 +54,7 @@ jobs:
         
       # Build the application (Windows)
       - name: Gradle & native build (Windows)
+        shell: cmd 
         run: |
           cd SwingTestTwo/
           ./gradlew build
