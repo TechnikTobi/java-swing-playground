@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [ubuntu-latest]
         #os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
 
@@ -44,39 +44,33 @@ jobs:
         if: matrix.os != 'windows-latest'
         
         
-        # Build the application (Non-Windows)
-      - name: Gradle & native build (Non-Windows)
+        
+        # Build the application (non-windows)
+      - name: Gradle & native build (non-windows)
         run: |
           cd SwingTestTwo/
           ./gradlew build
-          native-image -jar $(find build -name *.jar) HELLO
+          native-image -jar $(find build -name *.jar) HELLO --verbose
         if: matrix.os != 'windows-latest'
         
-      # Build the application (Windows)
-      - name: Gradle & native build (Windows)
+      # Build the application (windows)
+      - name: Gradle & native build (windows)
         shell: cmd 
         run: |
           cd SwingTestTwo/
           ./gradlew build
-          echo $(find build -name *.jar)
           native-image -jar $(dir /s /b "*.jar") HELLO 
-#          native-image -jar build/libs/SwingTestTwo-1.0-SNAPSHOT.jar HELLO
-#          ls -R
-#          echo $(find /c/ -name "*.jar")
         if: matrix.os == 'windows-latest'
           
           
           
-          
-      - name: List all
-        run: ls -R
-
         # Create Artifact
       - name: Create Artifact (non-windows)
         run: |
           cd SwingTestTwo
           mkdir ${{ matrix.os }}-release
           cp HELLO* ${{ matrix.os }}-release/
+      
       
       
         # ZIP Artifact
@@ -93,6 +87,7 @@ jobs:
           7z a "${{ matrix.os }}.zip" "${{ matrix.os }}-release/"
           mv ${{ matrix.os }}.zip ..
         if: matrix.os == 'windows-latest'
+      
       
       
         # Publish Artifact
