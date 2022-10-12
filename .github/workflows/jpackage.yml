@@ -30,12 +30,7 @@ jobs:
         run: |
           cd SwingTestTwo/
           ./gradlew build
-          jpackage --input . \
-            --type dmg \
-            --dest . \
-            --main-jar $(find build -name *.jar) \ 
-            --main-class main.Main
-            --name ${{ env.NativeImageOutput }}
+          jpackage --input . --type dmg --dest . --main-jar $(find build -name *.jar) --main-class main.Main --name ${{ env.NativeImageOutput }}
         if: matrix.os == 'macos-latest'
         
         # Build the application (windows)
