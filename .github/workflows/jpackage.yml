@@ -1,0 +1,92 @@
+# This is a basic workflow to help you get started with Actions
+
+name: JPackage
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+
+jobs:
+
+  build_and_publish:
+
+    strategy:
+      matrix:
+        os: [macos-latest] #, windows-latest] # ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    
+    env:
+      NativeImageOutput: HELLO
+
+    steps:
+
+        # Get the source code
+      - uses: actions/checkout@v3
+  
+        # Build the application (macos)
+      - name: Gradle & native build (macos)
+        run: |
+          cd SwingTestTwo/
+          ./gradlew build
+          jpackage --input . \
+            --type dmg \
+            --dest . \
+            --main-jar $(find build -name *.jar) \ 
+            --main-class main.Main
+            --name ${{ env.NativeImageOutput }}
+        if: matrix.os == 'macos-latest'
+        
+        # Build the application (windows)
+      - name: Gradle & native build (windows)
+        shell: cmd 
+        run: |
+          cd SwingTestTwo/
+          ./gradlew build
+          native-image -jar $(dir /s /b "*.jar") ${{ env.NativeImageOutput }}
+        if: matrix.os == 'windows-latest'
+        
+        # Build the application (non-windows)
+      - name: Gradle & native build (non-windows)
+        run: |
+          cd SwingTestTwo/
+          ./gradlew customFatJar
+          native-image --no-fallback --no-server --verbose -Djava.awt.headless=false -jar $(find build -name *.jar) ${{ env.NativeImageOutput }}
+        if: matrix.os == 'ubuntu-latest'
+          
+          
+          
+        # Create Artifact
+      - name: Create Artifact (non-windows)
+        run: |
+          cd SwingTestTwo
+          mkdir ${{ matrix.os }}-release
+          cp ${{ env.NativeImageOutput }}* ${{ matrix.os }}-release/
+      
+      
+      
+        # ZIP Artifact
+      - name: ZIP Artifact (non-windows)
+        run: |
+          cd SwingTestTwo
+          zip -r ${{ matrix.os }}.zip ${{ matrix.os }}-release/
+          mv ${{ matrix.os }}.zip ..
+        if: matrix.os != 'windows-latest'
+          
+      - name: ZIP Artifact (windows)
+        run: |
+          cd SwingTestTwo
+          7z a "${{ matrix.os }}.zip" "${{ matrix.os }}-release/"
+          mv ${{ matrix.os }}.zip ..
+        if: matrix.os == 'windows-latest'
+      
+      
+      
+        # Publish Artifact
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          retention-days: 1
+          name: ${{ matrix.os }}
+          path: ${{ matrix.os }}.zip
