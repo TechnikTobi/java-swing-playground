@@ -5,8 +5,6 @@ name: CI
 on:
   push:
     branches: [ "main" ]
-#  pull_request:
-#    branches: [ "main" ]
   workflow_dispatch:
 
 
@@ -16,20 +14,29 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        #os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [macos-latest, windows-latest] # ubuntu-latest
     runs-on: ${{ matrix.os }}
+    
+    env:
+      NativeImageOutput: HELLO
 
     steps:
 
       # Get the source code
       - uses: actions/checkout@v3
       
+      # Install required library for Linux
+      - name: Install libXi on Linux
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libxi-dev
+        if: matrix.os == 'ubuntu-latest'
+      
       # Setup the java enviornment 
       - uses: graalvm/setup-graalvm@v1
         with:
           version: 'latest'
-          java-version: '18'
+          java-version: '17'
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
       
@@ -42,32 +49,33 @@ jobs:
           gu --version
           native-image --version
         if: matrix.os != 'windows-latest'
-        
-        
-        # Install required library for Linux
-      - name: Install libXi on Linux
+      
+      
+
+        # Build the application (macos)
+      - name: Gradle & native build (macos)
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y libxi-dev
-        if: matrix.os == 'ubuntu-latest'
+          cd SwingTestTwo/
+          ./gradlew build
+          native-image -jar $(find build -name *.jar) ${{ env.NativeImageOutput }}
+        if: matrix.os == 'macos-latest'
+        
+        # Build the application (windows)
+      - name: Gradle & native build (windows)
+        shell: cmd 
+        run: |
+          cd SwingTestTwo/
+          ./gradlew build
+          native-image -jar $(dir /s /b "*.jar") ${{ env.NativeImageOutput }}
+        if: matrix.os == 'windows-latest'
         
         # Build the application (non-windows)
       - name: Gradle & native build (non-windows)
         run: |
           cd SwingTestTwo/
           ./gradlew customFatJar
-          native-image --no-fallback --no-server --verbose -Djava.awt.headless=false -jar $(find build -name *.jar) HELLO
-        if: matrix.os != 'windows-latest'
-#          ./gradlew build
-        
-      # Build the application (windows)
-      - name: Gradle & native build (windows)
-        shell: cmd 
-        run: |
-          cd SwingTestTwo/
-          ./gradlew build
-          native-image -jar $(dir /s /b "*.jar") HELLO 
-        if: matrix.os == 'windows-latest'
+          native-image --no-fallback --no-server --verbose -Djava.awt.headless=false -jar $(find build -name *.jar) ${{ env.NativeImageOutput }}
+        if: matrix.os == 'ubuntu-latest'
           
           
           
@@ -76,7 +84,7 @@ jobs:
         run: |
           cd SwingTestTwo
           mkdir ${{ matrix.os }}-release
-          cp HELLO* ${{ matrix.os }}-release/
+          cp ${{ env.NativeImageOutput }}* ${{ matrix.os }}-release/
       
       
       
