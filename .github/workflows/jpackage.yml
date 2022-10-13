@@ -56,7 +56,7 @@ jobs:
         shell: cmd 
         run: |
           cd SwingTestTwo/
-          ./gradlew build
+          gradlew build
           jpackage --version
           jpackage --app-version 1.0.0 --input . --dest ./${{ matrix.os }}-release --main-jar $(dir /s /b "*.jar") --main-class main.Main --name ${{ env.NativeImageOutput }} --copyright "Tobias Prisching" --verbose
         if: matrix.os == 'windows-latest'
