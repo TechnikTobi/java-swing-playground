@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest] # [macos-latest, windows-latest, ubuntu-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     
     env:
@@ -25,14 +25,14 @@ jobs:
         # Get the source code
       - uses: actions/checkout@v3
       
-        # Set up JDK for Windows
-      - uses: actions/setup-java@v3
-        if: matrix.os == 'windows-latest'
-        with:
-          distribution: 'microsoft'
-          java-version: '17'
-          java-package: 'jdk'
-          cache: 'gradle'
+#        # Set up JDK for Windows
+#      - uses: actions/setup-java@v3
+#        if: matrix.os == 'windows-latest'
+#        with:
+#          distribution: 'microsoft'
+#          java-version: '17'
+#          java-package: 'jdk'
+#          cache: 'gradle'
   
   
   
@@ -48,23 +48,16 @@ jobs:
             --main-jar $(find build -name *.jar) \
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
-            --copyright "Tobias Prisching"
+            --copyright "Tobias Prisching" \
+            --verbose
         if: matrix.os == 'macos-latest'
         
-        # Build the application (windows - Part 1)
-      - name: Gradle...
+        # Build the application (windows)
+      - name: Gradl & native build (windows)
         shell: cmd 
         run: |
           cd SwingTestTwo/
           gradlew build
-        if: matrix.os == 'windows-latest'
-        
-         # Build the application (windows - Part 2)
-      - name: ...and native build (windows)
-        shell: cmd 
-        run: |
-          cd SwingTestTwo/
-          jpackage --version
           jpackage ^
            --app-version 1.0.0 ^
            --input . ^
@@ -89,7 +82,8 @@ jobs:
             --main-jar $(find build -name *.jar) \
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
-            --copyright "Tobias Prisching"
+            --copyright "Tobias Prisching" \
+            --verbose
         if: matrix.os == 'ubuntu-latest'
           
         # List all
