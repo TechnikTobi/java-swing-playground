@@ -41,9 +41,9 @@ jobs:
           ./gradlew build
           jpackage \
             --app-version ${{ env.AppVersion }} \
-            --input . \
+            --input build/libs/ \
             --dest ${{ matrix.os }}-release \
-            --main-jar $(find build -name *.jar) \
+            --main-jar *.jar \
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
             --copyright "${{ env.CopyrightString }}" \
