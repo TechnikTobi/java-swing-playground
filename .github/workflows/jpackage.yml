@@ -69,12 +69,13 @@ jobs:
            --app-version 1.0.0 ^
            --input . ^
            --dest ./${{ matrix.os }}-release ^
-           --main-jar $(dir /s /b "*.jar") ^
+           --main-jar build/libs/*.jar ^
            --main-class main.Main ^
            --name ${{ env.NativeImageOutput }} ^
            --copyright "Tobias Prisching" ^
            --verbose
         if: matrix.os == 'windows-latest'
+#            --main-jar $(dir /s /b "*.jar") ^
         
         # Build the application (linux)
       - name: Gradle & native build (linux)
