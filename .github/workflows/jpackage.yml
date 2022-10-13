@@ -25,6 +25,8 @@ jobs:
         # Get the source code
       - uses: actions/checkout@v3
       
+      
+      
 #        # Set up JDK for Windows
 #      - uses: actions/setup-java@v3
 #        if: matrix.os == 'windows-latest'
@@ -52,12 +54,21 @@ jobs:
             --verbose
         if: matrix.os == 'macos-latest'
         
-        # Build the application (windows)
-      - name: Gradl & native build (windows)
+        
+        # Build the application (windows - part 1)
+      - name: Gradle... (windows - part 1)
         shell: cmd 
         run: |
           cd SwingTestTwo/
           gradlew build
+        if: matrix.os == 'windows-latest'
+        
+        # Build the application (windows - part 2)
+      - name: ...and native build (windows - part 1)
+        shell: cmd 
+        run: |
+          cd SwingTestTwo/
+          jpackage --version
           jpackage ^
            --app-version 1.0.0 ^
            --input . ^
@@ -68,7 +79,7 @@ jobs:
            --copyright "Tobias Prisching" ^
            --verbose
         if: matrix.os == 'windows-latest'
-#            --main-jar $(dir /s /b "*.jar") ^
+        
         
         # Build the application (linux)
       - name: Gradle & native build (linux)
@@ -86,10 +97,14 @@ jobs:
             --verbose
         if: matrix.os == 'ubuntu-latest'
           
+          
+          
         # List all
       - name: List all
         run: |
           ls -R
+      
+      
       
         # ZIP Artifact
       - name: ZIP Artifact (non-windows)
