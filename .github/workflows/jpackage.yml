@@ -1,12 +1,9 @@
-# This is a basic workflow to help you get started with Actions
-
 name: JPackage
 
 on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
-
 
 jobs:
 
@@ -19,16 +16,16 @@ jobs:
     
     env:
       NativeImageOutput: JavaSwingPlaygroundTest
+      AppVersion: 1.0.0
+      CopyrightString: "Tobias Prisching"
 
     steps:
 
-        # Get the source code
-      - uses: actions/checkout@v3
+      - name: Get the source code
+        uses: actions/checkout@v3
       
-      
-      
-        # Set up JDK (windows)
-      - uses: actions/setup-java@v3
+      - name: Setup JDK (Windows only)
+        uses: actions/setup-java@v3
         with:
           distribution: 'microsoft'
           java-version: '17'
@@ -38,75 +35,69 @@ jobs:
   
   
   
-        # Build the application (macos)
-      - name: Gradle & native build (macos)
+      - name: Build - MacOS
         run: |
           cd SwingTestTwo/
           ./gradlew build
           jpackage \
-            --app-version 1.0.0 \
+            --app-version ${{ env.AppVersion }} \
             --input . \
             --dest ${{ matrix.os }}-release \
             --main-jar $(find build -name *.jar) \
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
-            --copyright "Tobias Prisching" \
+            --copyright ${{ env.CopyrightString }} \
             --verbose
         if: matrix.os == 'macos-latest'
         
         
-        # Build the application (windows - part 1)
-      - name: Gradle... (windows - part 1)
+      - name: Build - Windows (Part 1)
         shell: cmd 
         run: |
           cd SwingTestTwo/
           gradlew build
         if: matrix.os == 'windows-latest'
         
-        # Build the application (windows - part 2)
-      - name: ...and native build (windows - part 1)
+      - name: Build - Windows (Part 2)
         shell: cmd 
         run: |
           cd SwingTestTwo/
           jpackage --version
           jpackage ^
-           --app-version 1.0.0 ^
+           --app-version ${{ env.AppVersion }} ^
            --input . ^
            --dest ./${{ matrix.os }}-release ^
            --main-jar build/libs/*.jar ^
            --main-class main.Main ^
            --name ${{ env.NativeImageOutput }} ^
-           --copyright "Tobias Prisching" ^
+           --copyright ${{ env.CopyrightString }} ^
            --verbose
         if: matrix.os == 'windows-latest'
         
         
-        # Build the application (linux)
-      - name: Gradle & native build (linux)
+      - name: Build - Linux
         run: |
           cd SwingTestTwo/
           ./gradlew build
           jpackage \
-            --app-version 1.0.0 \
+            --app-version ${{ env.AppVersion }} \
             --input . \
             --dest ${{ matrix.os }}-release \
             --main-jar $(find build -name *.jar) \
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
-            --copyright "Tobias Prisching" \
+            --copyright ${{ env.CopyrightString }} \
             --verbose
         if: matrix.os == 'ubuntu-latest'
           
           
           
-        # List all
       - name: List all
         run: |
           ls -R
       
       
       
-        # ZIP Artifact
       - name: ZIP Artifact (non-windows)
         run: |
           cd SwingTestTwo
@@ -122,11 +113,35 @@ jobs:
         if: matrix.os == 'windows-latest'
       
       
-      
-        # Publish Artifact
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
         with:
           retention-days: 1
           name: ${{ matrix.os }}
           path: ${{ matrix.os }}.zip
+
+
+
+  release:
+    name: "Release"
+    needs: build_and_publish
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: Grab all the artifacts from the build stage
+        uses: actions/download-artifact@v2
+      
+      - name: Display fetched artifacts
+        run: ls -R
+      
+      - name: Create Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Latest (development) Build"
+          files: |
+            ubuntu-latest/ubuntu-latest.zip
+            macos-latest/macos-latest.zip
+            windows-latest/windows-latest.zip
