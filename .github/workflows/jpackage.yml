@@ -51,12 +51,19 @@ jobs:
             --copyright "Tobias Prisching"
         if: matrix.os == 'macos-latest'
         
-        # Build the application (windows)
-      - name: Gradle & native build (windows)
+        # Build the application (windows - Part 1)
+      - name: Gradle...
         shell: cmd 
         run: |
           cd SwingTestTwo/
           gradlew build
+        if: matrix.os == 'windows-latest'
+        
+         # Build the application (windows - Part 2)
+      - name: ...and native build (windows)
+        shell: cmd 
+        run: |
+          cd SwingTestTwo/
           jpackage --version
           jpackage --app-version 1.0.0 --input . --dest ./${{ matrix.os }}-release --main-jar $(dir /s /b "*.jar") --main-class main.Main --name ${{ env.NativeImageOutput }} --copyright "Tobias Prisching" --verbose
         if: matrix.os == 'windows-latest'
