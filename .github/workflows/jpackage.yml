@@ -27,14 +27,14 @@ jobs:
       
       
       
-#        # Set up JDK for Windows
-#      - uses: actions/setup-java@v3
-#        if: matrix.os == 'windows-latest'
-#        with:
-#          distribution: 'microsoft'
-#          java-version: '17'
-#          java-package: 'jdk'
-#          cache: 'gradle'
+        # Set up JDK (windows)
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+          java-package: 'jdk'
+          cache: 'gradle'
+        if: matrix.os == 'windows-latest'
   
   
   
