@@ -39,11 +39,13 @@ jobs:
         run: |
           cd SwingTestTwo/
           ./gradlew build
+          mv $(find build -name *.jar) build/libs/main.jar
+          ls -R
           jpackage \
             --app-version ${{ env.AppVersion }} \
             --input build/libs/ \
             --dest ${{ matrix.os }}-release \
-            --main-jar *.jar \
+            --main-jar main.jar \
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
             --copyright "${{ env.CopyrightString }}" \
