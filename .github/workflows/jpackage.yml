@@ -47,6 +47,7 @@ jobs:
             --main-class main.Main \
             --name ${{ env.NativeImageOutput }} \
             --copyright "${{ env.CopyrightString }}" \
+            --type app-image \
             --verbose
         if: matrix.os == 'macos-latest'
         
